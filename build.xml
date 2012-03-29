@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GoMarket" default="release">
+
+	<!-- The local.properties file is created and updated by the 'android' tool.
+         It contains the path to the SDK. It should *NOT* be checked in in Version
+         Control Systems. -->
+	<property file="local.properties" />
+
+	<!-- The build.properties file can be created by you and is never touched
+         by the 'android' tool. This is the place to change some of the default property values
+         used by the Ant rules.
+         Here are some properties you may want to change/update:
+
+         application.package
+             the name of your application package as defined in the manifest. Used by the
+             'uninstall' rule.
+         source.dir
+             the name of the source directory. Default is 'src'.
+         out.dir
+             the name of the output directory. Default is 'bin'.
+
+         Properties related to the SDK location or the project target should be updated
+          using the 'android' tool with the 'update' action.
+
+         This file is an integral part of the build system for your application and
+         should be checked in in Version Control Systems.
+
+         -->
+	<property file="build.properties" />
+
+	<!-- The default.properties file is created and updated by the 'android' tool, as well
+         as ADT.
+         This file is an integral part of the build system for your application and
+         should be checked in in Version Control Systems. -->
+	<property file="project.properties" />
+
+	<import file="${sdk.dir}/tools/ant/build.xml" />
+
+
+	
+	<target name="-optimize" depends="-compile">
+		<echo>optimize1</echo>
+		<jar basedir="${out.classes.absolute.dir}" destfile="temp.jar" />
+		<echo>optimize2</echo>
+		<java jar="${proguard.jar.path}" fork="true" failonerror="true">
+
+			<jvmarg value="-Dmaximum.inlined.code.length=32" />
+
+			<arg value="-injars temp.jar" />
+
+			<arg value="-outjars optimized.jar" />
+
+			<arg value="-libraryjars ${android.jar.path}" />
+
+			<arg value="-dontpreverify" />
+
+			<arg value="-dontoptimize" />
+
+			<arg value="-dontusemixedcaseclassnames" />
+
+			<arg value="-repackageclasses " />
+
+			<arg value="-allowaccessmodification" />
+			<arg value="-keep public class * extends Parcelable" />
+			<arg value="-keep public class cn.goapk.market.GoMarketApplication" />
+			<arg value="-keep public class cn.goapk.market.GoApkLoginAndRegister" />
+			<arg value="-keep public class cn.goapk.market.DaemonService" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMainActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMarketHome" />
+			<arg value="-keep public class cn.goapk.market.gui.GoManageActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoCategoryActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMarketTopActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMarketSearchActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSoftIntroductionActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSoftProblemsActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSoftScreenshotsActivity" />
+			<arg value="-keep public class cn.goapk.market.download.GoApkReceiver" />
+			<arg value="-keep public class cn.goapk.market.download.GoApkUpdateReceiver" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSoftSettingsActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSkinListActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSoftUpdateActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMarketUpdateDialog" />
+			<arg value="-keep public class cn.goapk.market.download.provider.DownloadProvider" />
+			<arg value="-keep public class cn.goapk.market.control.GoMarketDataProvider" />
+			<arg value="-keep public class cn.goapk.market.control.MarketService" />
+			<arg value="-keep public class cn.goapk.market.gui.CheckSignatureDialog" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMarketFeedBack" />
+			<arg value="-keep public class cn.goapk.market.gui.GoHistoryActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.PostSoftCommentActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoSoftOutListActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMarketGuideActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMessageActivity" />
+			<arg value="-keep public class cn.goapk.market.gui.GoMessageDetailActivity" />
+			<arg value="-keep public class cn.goapk.market.control.GoAppWidget" />
+			<arg value="-keepclassmembers class * {
+			    *** CREATOR;
+			}" />
+			<arg value="-keepclasseswithmembers class cn.goapk.market.gui.GoMarketListView {
+				public GoMarketListView(...);
+			}" />
+			<arg value="-printusage 'unusage.log'" />
+			<arg value="-printmapping 'mapping.log'" />
+			<arg value="-optimizationpasses 1" />
+
+			<arg value="-verbose" />
+
+			<arg value="-dontskipnonpubliclibraryclasses" />
+
+			<arg value="-dontskipnonpubliclibraryclassmembers" />
+
+		</java>
+		<echo>optimize3</echo>
+		<delete file="temp.jar" />
+
+		<delete dir="${out.classes.absolute.dir}" />
+
+		<mkdir dir="${out.classes.absolute.dir}" />
+
+		<unzip src="optimized.jar" dest="${out.classes.absolute.dir}" />
+
+		<!---->
+		<delete file="optimized.jar" />
+
+	</target>
+
+	<!-- Converts this project's .class files into .dex files -->
+	<target name="-dex" depends="-optimize">
+		<echo>-dex</echo>
+		<dex-helper />
+	</target>
+
+</project>
